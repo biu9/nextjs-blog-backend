@@ -19,8 +19,8 @@ const connection = mysql.createConnection({
 })
 
 const requestBlogType = {
-  'recentPosts':1,
-  'popularPosts':2,
+  recentPosts: 1,
+  popularPosts: 2,
 }
 
 router.post('/get', (req, res) => {
@@ -28,17 +28,17 @@ router.post('/get', (req, res) => {
   const log = `get blog content at ${new Date().toLocaleString()}\r\n`
   fs.appendFileSync('./src/blog/log.txt', log)
 
-  let sql;
-  if(req.body.type === requestBlogType.recentPosts) {
-    sql = 'select * from blogContent ORDER BY `id` DESC LIMIT 8 OFFSET 0';
-  } else if(req.body.type === requestBlogType.popularPosts) {
-    sql = 'select * from blogContent ORDER BY `readTimes` DESC LIMIT 3 OFFSET 0';
+  let sql
+  if (req.body.type === requestBlogType.recentPosts) {
+    sql = 'select * from blogContent ORDER BY `id` DESC LIMIT 8 OFFSET 0'
+  } else if (req.body.type === requestBlogType.popularPosts) {
+    sql = 'select * from blogContent ORDER BY `readTimes` DESC LIMIT 3 OFFSET 0'
   }
 
   connection.query(sql, function (err, result) {
     if (err) {
       // write error
-      const errorLog = `  error: ${err}\r\n`;
+      const errorLog = `  error: ${err}\r\n`
       fs.appendFileSync('./src/blog/log.txt', errorLog)
 
       res.end(
@@ -59,7 +59,34 @@ router.post('/get', (req, res) => {
 })
 
 router.post('/add', (req, res) => {
-  res.send('add blog content')
+  // wirte to log
+  const log = `add blog content at ${new Date().toLocaleString()}\r\n`
+  fs.appendFileSync('./src/blog/log.txt', log)
+
+  const sql =
+    'insert into blogContent (id, content, userId, time, tags,title,readTimes) values (?, ?, ?, ?, ?,?,0)'
+  const addParams = [
+    req.body.id,
+    req.body.content,
+    req.body.userId,
+    req.body.date,
+    req.body.type,
+    req.body.title,
+  ]
+  connection.query(sql, addParams, function (err, result) {
+    if (err) {
+      // write error
+      const errorLog = `  error: ${err}\r\n`
+      fs.appendFileSync('./src/blog/log.txt', errorLog)
+    } else {
+      res.end(
+        JSON.stringify({
+          message: 'success',
+          data: {},
+        }),
+      )
+    }
+  })
 })
 
 router.post('/update', (req, res) => {

@@ -48,4 +48,12 @@ router.post('/get',(req,res) => {
     })
 })
 
+router.post('/add',(req,res) => {   
+    
+})
+
+router.post('/update',(req,res) => {
+
+})
+
 module.exports = router
