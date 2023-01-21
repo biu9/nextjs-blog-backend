@@ -78,6 +78,7 @@ router.post('/add', (req, res) => {
       // write error
       const errorLog = `  error: ${err}\r\n`
       fs.appendFileSync('./src/blog/log.txt', errorLog)
+      res.end(JSON.stringify({ message: err, data: {} }))
     } else {
       res.end(
         JSON.stringify({
